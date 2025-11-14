@@ -6,6 +6,7 @@ import LoginPage from "./pages/Login";
 import SignupPage from "./pages/Signup";
 import { AuthProvider } from "./context/AuthContext";
 import EventDetails from "./pages/EventDetails";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
         </Routes>
+        <ToastContainer position="top-right" theme="light" autoClose={1000} />
       </BrowserRouter>
     </AuthProvider>
   );

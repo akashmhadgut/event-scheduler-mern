@@ -4,16 +4,15 @@ const API = axios.create({
   baseURL: "http://localhost:5000/api",
 });
 
-// Attach JWT to every request
+// Attach JWT to all requests
 API.interceptors.request.use(
   (config) => {
     try {
-      const token = localStorage.getItem("token");   // ← correct source
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+      const stored = localStorage.getItem("user");
+      if (stored && stored !== "undefined" && stored !== "null") {
+        const { token } = JSON.parse(stored);
+        if (token) config.headers.Authorization = `Bearer ${token}`;
       }
-      // Optional debug:
-      // console.log("Auth header:", config.headers.Authorization);
     } catch (err) {
       console.error("Token read error:", err);
     }
@@ -22,14 +21,12 @@ API.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Optional: auto-logout on 401
+// Optional: auto logout on expired token
 API.interceptors.response.use(
   (res) => res,
   (err) => {
     if (err?.response?.status === 401) {
-      localStorage.removeItem("token");
       localStorage.removeItem("user");
-      // window.location.href = "/login"; // uncomment if you want auto-redirect
     }
     return Promise.reject(err);
   }

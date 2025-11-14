@@ -11,23 +11,34 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Redirect back to previous page or dashboard
-  const redirectTo = location.state?.from || "/dashboard";
+  // After login go back or go to /
+  const redirectTo = location.state?.from || "/";
 
+  // Handle input change
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
+  // Handle login submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
       const res = await API.post("/auth/login", form);
-      login(res.data.data);
+
+      const { token, user } = res.data.data;
+      const userData = { ...user, token };
+
+      // Save login
+      localStorage.setItem("user", JSON.stringify(userData));
+      login(userData);
+
       toast.success("Login successful!");
       navigate(redirectTo, { replace: true });
+
     } catch (err) {
-      console.error("Login error:", err);
-      toast.error("Invalid credentials. Please try again.");
+      const message = err.response?.data?.error || "Invalid credentials";
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -56,7 +67,9 @@ const LoginPage = () => {
               value={form.email}
               onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none transition"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 
+                         focus:ring-2 focus:ring-blue-400 focus:border-transparent 
+                         outline-none transition"
             />
           </div>
 
@@ -72,7 +85,9 @@ const LoginPage = () => {
               value={form.password}
               onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none transition"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 
+                         focus:ring-2 focus:ring-blue-400 focus:border-transparent 
+                         outline-none transition"
             />
           </div>
 
@@ -80,7 +95,8 @@ const LoginPage = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition duration-200 shadow-sm ${
+            className={`w-full bg-blue-600 hover:bg-blue-700 text-white 
+                        font-semibold py-2.5 rounded-lg transition duration-200 shadow-sm ${
               loading && "opacity-70 cursor-not-allowed"
             }`}
           >

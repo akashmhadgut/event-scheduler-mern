@@ -14,13 +14,15 @@ const SignupPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
-      await API.post("/auth/signup", form);
-      toast.success("Signup successful! Please login.");
+      const res = await API.post("/auth/signup", form);
+
+      toast.success(res.data.message || "Signup successful!");
       navigate("/login");
     } catch (err) {
-      console.error("Signup error:", err);
-      toast.error(err.response?.data?.error || "Signup failed");
+      const message = err.response?.data?.error || "Signup failed";
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -34,6 +36,7 @@ const SignupPage = () => {
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          
           {/* Name */}
           <div>
             <label className="block text-gray-700 text-sm font-medium mb-1">
@@ -46,7 +49,9 @@ const SignupPage = () => {
               value={form.name}
               onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none transition"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 
+                         focus:ring-2 focus:ring-blue-400 focus:border-transparent 
+                         outline-none transition"
             />
           </div>
 
@@ -62,7 +67,9 @@ const SignupPage = () => {
               value={form.email}
               onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none transition"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 
+                         focus:ring-2 focus:ring-blue-400 focus:border-transparent 
+                         outline-none transition"
             />
           </div>
 
@@ -78,7 +85,9 @@ const SignupPage = () => {
               value={form.password}
               onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none transition"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 
+                         focus:ring-2 focus:ring-blue-400 focus:border-transparent 
+                         outline-none transition"
             />
           </div>
 
@@ -86,7 +95,8 @@ const SignupPage = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition duration-200 shadow-sm ${
+            className={`w-full bg-blue-600 hover:bg-blue-700 text-white 
+                        font-semibold py-2.5 rounded-lg transition duration-200 shadow-sm ${
               loading && "opacity-70 cursor-not-allowed"
             }`}
           >

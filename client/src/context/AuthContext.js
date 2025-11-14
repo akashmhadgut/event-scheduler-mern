@@ -6,14 +6,26 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) setUser(JSON.parse(storedUser));
+    try {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser && storedUser !== "undefined" && storedUser !== "null") {
+        const parsed = JSON.parse(storedUser);
+        setUser(parsed);
+      }
+    } catch (err) {
+      console.warn("Failed to parse stored user, clearing localStorage.user", err);
+      localStorage.removeItem("user");
+    }
   }, []);
 
   const login = (data) => {
-    setUser(data.user);
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("user", JSON.stringify(data.user));
+    // Accept both shapes: { user, token } or flattened { ...userFields, token }
+    const userObj = data?.user ? data.user : data || null;
+    const token = data?.token || (userObj && userObj.token) || null;
+
+    setUser(userObj);
+    if (token) localStorage.setItem("token", token);
+    if (userObj) localStorage.setItem("user", JSON.stringify(userObj));
   };
 
   const logout = () => {
