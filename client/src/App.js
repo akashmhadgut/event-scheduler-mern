@@ -1,11 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import EventsListPage from "./pages/EventsListPage";
+ import DashboardPage from "./pages/DashboardPage";
+import LoginPage from "./pages/Login";
+import SignupPage from "./pages/Signup";
+import { AuthProvider } from "./context/AuthContext";
+import EventDetails from "./pages/EventDetails";
 
 function App() {
   return (
-    <>
-     <h1>Event Scheduler App Frontend Running ✅</h1>
-    </>
+    <AuthProvider>
+      <BrowserRouter>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<EventsListPage />} />
+<Route path="/events/:id" element={<EventDetails />} />
+           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
